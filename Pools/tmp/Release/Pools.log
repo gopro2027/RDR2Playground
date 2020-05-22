@@ -1,0 +1,72 @@
+﻿  keyboard.cpp
+  main.cpp
+  NativeUtil.cpp
+D:\RDR2Playground_public\Pools\SimpleMenu.h(123,18): warning C4996: 'itoa': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _itoa. See online help for details.
+D:\RDR2Playground_public\Pools\NativeUtil.cpp(23,10): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+D:\RDR2Playground_public\Pools\NativeUtil.cpp(24,10): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+D:\RDR2Playground_public\Pools\NativeUtil.cpp(25,10): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+D:\RDR2Playground_public\Pools\NativeUtil.cpp(229,83): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+D:\RDR2Playground_public\Pools\NativeUtil.cpp(394,13): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+D:\RDR2Playground_public\Pools\NativeUtil.cpp(463,26): warning C4244: 'argument': conversion from 'int64_t' to 'int', possible loss of data
+D:\RDR2Playground_public\Pools\NativeUtil.cpp(473,26): warning C4244: 'argument': conversion from 'int64_t' to 'int', possible loss of data
+D:\RDR2Playground_public\Pools\NativeUtil.cpp(642,13): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+D:\RDR2Playground_public\Pools\NativeUtil.cpp(648,54): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\RDR2Playground_public\Pools\NativeUtil.cpp(657,54): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\RDR2Playground_public\Pools\NativeUtil.cpp(933,16): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+D:\RDR2Playground_public\Pools\NativeUtil.cpp(936,11): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+D:\RDR2Playground_public\Pools\NativeUtil.cpp(939,37): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+D:\RDR2Playground_public\Pools\NativeUtil.cpp(940,37): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+D:\RDR2Playground_public\Pools\NativeUtil.cpp(943,36): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+D:\RDR2Playground_public\Pools\NativeUtil.cpp(944,36): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+D:\RDR2Playground_public\Pools\NativeUtil.cpp(1024,49): warning C4805: '==': unsafe mix of type 'BOOL' and type 'bool' in operation
+D:\RDR2Playground_public\Pools\NativeUtil.cpp(1017,5): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\RDR2Playground_public\Pools\NativeUtil.cpp(1020,5): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+D:\RDR2Playground_public\Pools\NativeUtil.cpp(1132,12): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+D:\RDR2Playground_public\Pools\NativeUtil.cpp(1133,15): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+D:\RDR2Playground_public\Pools\NativeUtil.cpp(1134,15): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+D:\RDR2Playground_public\Pools\NativeUtil.cpp(1135,15): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+D:\RDR2Playground_public\Pools\NativeUtil.cpp(1695,77): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.25.28610\include\type_traits(1610): message : see reference to function template instantiation 'auto circlePeds::<lambda_16af1ca90f6b0b9bde14873d944fe13c>::operator ()<_Ty>(_Ty) const' being compiled
+          with
+          [
+              _Ty=int
+          ]
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.25.28610\include\type_traits(1731): message : see reference to alias template instantiation 'std::_Is_invocable_r_<void,circlePeds::<lambda_16af1ca90f6b0b9bde14873d944fe13c>&,int>' being compiled
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.25.28610\include\functional(986): message : see reference to class template instantiation 'std::_Is_invocable_r<_Ret,circlePeds::<lambda_16af1ca90f6b0b9bde14873d944fe13c> &,int>' being compiled
+          with
+          [
+              _Ret=void
+          ]
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.25.28610\include\functional(986): message : see reference to variable template 'const bool conjunction_v<std::negation<std::is_same<<lambda_16af1ca90f6b0b9bde14873d944fe13c>,std::function<void __cdecl(int)> > >,std::_Is_invocable_r<void,<lambda_16af1ca90f6b0b9bde14873d944fe13c> &,int> >' being compiled
+D:\RDR2Playground_public\Pools\NativeUtil.cpp(1695): message : see reference to alias template instantiation 'std::_Func_class<_Ret,int>::_Enable_if_callable_t<circlePeds::<lambda_16af1ca90f6b0b9bde14873d944fe13c>&,std::function<void (int)>>' being compiled
+          with
+          [
+              _Ret=void
+          ]
+D:\RDR2Playground_public\Pools\NativeUtil.cpp(2362,15): warning C4244: 'initializing': conversion from 'unsigned int' to 'float', possible loss of data
+D:\RDR2Playground_public\Pools\NativeUtil.cpp(2364,26): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+  script.cpp
+D:\RDR2Playground_public\Pools\SimpleMenu.h(123,18): warning C4996: 'itoa': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _itoa. See online help for details.
+D:\RDR2Playground_public\Pools\script.cpp(172,14): warning C4244: '*=': conversion from 'double' to 'DWORD', possible loss of data
+D:\RDR2Playground_public\Pools\script.cpp(178,40): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+D:\RDR2Playground_public\Pools\script.cpp(207,28): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+D:\RDR2Playground_public\Pools\script.cpp(1299,27): warning C4477: 'snprintf' : format string '%p' requires an argument of type 'void *', but variadic argument 1 has type 'uint64_t'
+D:\RDR2Playground_public\Pools\script.cpp(1299,27): warning C4477: 'snprintf' : format string '%p' requires an argument of type 'void *', but variadic argument 2 has type 'uint64_t'
+D:\RDR2Playground_public\Pools\script.cpp(1299,27): warning C4477: 'snprintf' : format string '%p' requires an argument of type 'void *', but variadic argument 3 has type 'uint64_t'
+D:\RDR2Playground_public\Pools\script.cpp(1299,27): warning C4477: 'snprintf' : format string '%p' requires an argument of type 'void *', but variadic argument 4 has type 'uint64_t'
+D:\RDR2Playground_public\Pools\script.cpp(1422,13): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+  SimpleMenu.cpp
+D:\RDR2Playground_public\Pools\SimpleMenu.h(123,18): warning C4996: 'itoa': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _itoa. See online help for details.
+D:\RDR2Playground_public\Pools\SimpleMenu.cpp(318,17): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+  buffer.c
+  hde64.c
+  hook.c
+  trampoline.c
+  Generating code
+  Previous IPDB not found, fall back to full compilation.
+D:\RDR2Playground_public\Pools\NativeUtil.cpp(2418): warning C4715: 'func_496': not all control paths return a value
+  All 2173 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Finished generating code
+  Pools.vcxproj -> D:\RDR2Playground_public\Pools\bin\Release\Playground.asi
+          1 file(s) copied.
+  "Copied to installation in V drive"

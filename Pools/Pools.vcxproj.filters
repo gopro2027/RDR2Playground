@@ -1,0 +1,98 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="script.cpp" />
+    <ClCompile Include="NativeUtil.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleMenu.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="third-party\minhook\src\buffer.c">
+      <Filter>Source\minhook</Filter>
+    </ClCompile>
+    <ClCompile Include="third-party\minhook\src\hook.c">
+      <Filter>Source\minhook</Filter>
+    </ClCompile>
+    <ClCompile Include="third-party\minhook\src\trampoline.c">
+      <Filter>Source\minhook</Filter>
+    </ClCompile>
+    <ClCompile Include="third-party\minhook\src\hde\hde64.c">
+      <Filter>Source\minhook\hde</Filter>
+    </ClCompile>
+    <ClCompile Include="keyboard.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="script.h" />
+    <ClInclude Include="NativeUtil.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleMenu.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="third-party\CMemory.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="third-party\minhook\include\MinHook.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="third-party\minhook\src\buffer.h">
+      <Filter>Source\minhook</Filter>
+    </ClInclude>
+    <ClInclude Include="third-party\minhook\src\trampoline.h">
+      <Filter>Source\minhook</Filter>
+    </ClInclude>
+    <ClInclude Include="third-party\minhook\src\hde\hde64.h">
+      <Filter>Source\minhook\hde</Filter>
+    </ClInclude>
+    <ClInclude Include="third-party\minhook\src\hde\pstdint.h">
+      <Filter>Source\minhook\hde</Filter>
+    </ClInclude>
+    <ClInclude Include="third-party\minhook\src\hde\table64.h">
+      <Filter>Source\minhook\hde</Filter>
+    </ClInclude>
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="keyboard.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="inc\natives.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="scripthook\inc\main.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="scripthook\inc\enums.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="scripthook\inc\nativeCaller.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="scripthook\inc\types.h">
+      <Filter>include</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="include">
+      <UniqueIdentifier>{5d58942b-ebbf-4d0a-9526-359e3a556796}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headers">
+      <UniqueIdentifier>{ffde11cb-d20a-486d-907f-2e57f3c9a022}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source">
+      <UniqueIdentifier>{19139529-c7e3-4d88-b32c-0a43f4feb728}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\minhook">
+      <UniqueIdentifier>{5410edd5-1ded-4395-ae68-c38f47f49a60}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\minhook\hde">
+      <UniqueIdentifier>{a740813e-7f48-4dd0-a5de-f62e01dbc68c}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Pools.rc" />
+  </ItemGroup>
+</Project>
