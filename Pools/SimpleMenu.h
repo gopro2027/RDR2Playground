@@ -120,7 +120,7 @@ struct OptionData {
 		static char buf[50];
 		if (type == OPTIONTYPE_INT) {
 			int *val = (int*)this->value;
-			keyboardInput(itoa(*val,buf,10),val);
+			keyboardInput(_itoa(*val,buf,10),val);
 		}
 		if (type == OPTIONTYPE_FLOAT) {
 			float *val = (float*)this->value;
