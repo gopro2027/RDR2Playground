@@ -31,7 +31,7 @@ void entity_draw_info_add(std::vector<text_box_t> &textOnScreen, Entity entity, 
 			return;
 		// get coords
 		Vector3 plv = ENTITY::GET_ENTITY_COORDS(PLAYER::PLAYER_PED_ID(), TRUE, FALSE);
-		float dist = GAMEPLAY::GET_DISTANCE_BETWEEN_COORDS(plv.x, plv.y, plv.z, v.x, v.y, v.z, TRUE);
+		float dist = MISC::GET_DISTANCE_BETWEEN_COORDS(plv.x, plv.y, plv.z, v.x, v.y, v.z, TRUE);
 		// draw text if entity isn't close to the player
 		if (dist > mindist && dist < maxdist)
 		{
@@ -135,11 +135,11 @@ void update()
 	// draw
 	for each (auto &iter in textOnScreen)
 	{
-		UI::SET_TEXT_SCALE(0.2, 0.2);
-		UI::SET_TEXT_COLOR_RGBA(255, 255, 255, 255);
-		UI::SET_TEXT_CENTRE(0);
-		UI::SET_TEXT_DROPSHADOW(0, 0, 0, 0, 0);
-		UI::DRAW_TEXT(GAMEPLAY::CREATE_STRING(10, "LITERAL_STRING", const_cast<char *>(iter.text.c_str())), iter.x, iter.y);
+		UIDEBUG::_BG_SET_TEXT_SCALE(0.2, 0.2);
+		HUD::_SET_TEXT_COLOR(255, 255, 255, 255);
+		UIDEBUG::SET_TEXT_CENTRE(0);
+		//UIDEBUG::SET_TEXT_DROPSHADOW(0, 0, 0, 0, 0);
+		UIDEBUG::_BG_DISPLAY_TEXT(MISC::VAR_STRING(10, "LITERAL_STRING", const_cast<char *>(iter.text.c_str())), iter.x, iter.y);
 		// box
 		GRAPHICS::DRAW_RECT(iter.x + 0.028f, iter.y + 0.033f, 0.058f, 0.041f, iter.r, iter.g, iter.b, iter.a, 0, 0);
 	}
@@ -156,7 +156,6 @@ void update()
 
 // dllmain.cpp : Script entry point
 
-#include "pch.h"
 #include "SimpleMenu.h"
 #include "NativeUtil.h"
 
@@ -204,7 +203,7 @@ int consolePrintCount = 0;
 bool shouldPrintConsole = true;
 void consolePrint(char *text) {
 	if (shouldPrintConsole)
-		DrawGameText(0.00f, 0.00 + 0.025f * consolePrintCount, text, 255, 255, 255, 255, 0.35f, 0.35f);
+		DrawGameText(0.0f, 0.0f + 0.025f * consolePrintCount, text, 255, 255, 255, 255, 0.35f, 0.35f);
 	consolePrintCount++;
 }
 void consolePrintReset() {
@@ -411,7 +410,7 @@ ui64 CPedFactoryCreatePed0(ui64 r3, ui64 r4, ui64 r5, ui64 r6, ui64 r7, ui64 r8,
 	if (zombieMode) {// && (/*r4 == 0x15 || */r4 == 0x6 || r4 == 0x7 || r4 == 0x10 || r4 == 0x11)
 
 		char* h = (char*)zombiearr[rand() % 5];
-		int hash = GAMEPLAY::GET_HASH_KEY(h);//random zombie hash
+		int hash = MISC::GET_HASH_KEY(h);//random zombie hash
 
 		/*bool dontUse = false;
 		if (hash == 0x53367A8A) {
@@ -727,7 +726,7 @@ void TickCpp()
 	PortalGun::loop();
 	localEntityManager();
 	if (snowCoverageLevel != 0) {
-		GRAPHICS::_0xF02A9C330BBFC5C7(snowCoverageLevel);
+		GRAPHICS::_SET_SNOW_COVERAGE_TYPE(snowCoverageLevel);
 	}
 
 	if (customCameraZoom)
@@ -751,7 +750,7 @@ void TickCpp()
 	//consolePrint(buf);
 
 	for (int i = 0; i < 5; i++)
-		RequestModel(GAMEPLAY::GET_HASH_KEY((char*)zombiearr[i]));
+		RequestModel(MISC::GET_HASH_KEY((char*)zombiearr[i]));
 
 	if (zombieMode) {
 		PLAYER::SET_WANTED_LEVEL_MULTIPLIER( 0.0f);
@@ -774,13 +773,12 @@ void TickCpp()
 
 	//for (auto i = spawnedPeds.begin(); i != spawnedPeds.end(); ++i)
 	//	teleportPedToMe(*i);
-
 	switch (simpleMenu.getCurrentMenu()) {
 	case MENU_MAIN:
 		switch (simpleMenu.clickOption()) {
 		case 0:
 			noclipResource.Toggle();
-			print((char*)"Noclip Toggled");
+			print((char*)"Noclip Toggled", 7000);
 			break;
 		case 1:
 			simpleMenu.openSubmenu(MENU_SPAWN_VEHICLES);
@@ -1004,7 +1002,7 @@ void TickCpp()
 			});
 			break;
 		case 12:
-			GRAPHICS::_0xF02A9C330BBFC5C7(snowCoverageLevel);
+			GRAPHICS::_SET_SNOW_COVERAGE_TYPE(snowCoverageLevel);
 			break;
 		case 13:
 			//enableLocalGamemode();
@@ -1022,12 +1020,12 @@ void TickCpp()
 				addPedToZombieGroup(ped);
 				ENTITY::SET_ENTITY_AS_MISSION_ENTITY(ped, true, true);
 
-				Hash hash = GAMEPLAY::GET_HASH_KEY("WEAPON_SHOTGUN_SEMIAUTO");
+				Hash hash = MISC::GET_HASH_KEY("WEAPON_SHOTGUN_SEMIAUTO");
 				WEAPON::GIVE_DELAYED_WEAPON_TO_PED(ped, hash, -1, true, 0x2cd419dc);
 				WEAPON::SET_PED_AMMO(ped, hash, 1000);
 				WEAPON::SET_CURRENT_PED_WEAPON(ped, hash, 1, 0, 0, 0);
 
-				AI::TASK_COMBAT_HATED_TARGETS(ped, 1000.0f);//unsure  0x8182B561A29BD597
+				TASK::TASK_COMBAT_HATED_TARGETS(ped, 1000.0f);//unsure  0x8182B561A29BD597
 				PED::SET_PED_FLEE_ATTRIBUTES(ped, 0, 0);//unsure
 				PED::SET_PED_COMBAT_ATTRIBUTES(ped, 46, 1);//unsure
 				PED::SET_PED_KEEP_TASK(ped, true);
@@ -1044,7 +1042,7 @@ void TickCpp()
 				//setPedKillable(ped);
 
 				ENTITY::SET_ENTITY_INVINCIBLE(ped, false);
-				ENTITY::SET_ENTITY_PROOFS(ped, false, false, false, false, false, false, false, false);
+				ENTITY::SET_ENTITY_PROOFS(ped, false, false);
 				
 				//static char buf[50];
 				//snprintf(buf, sizeof(buf), "Max Health: %i", ENTITY::GET_ENTITY_MAX_HEALTH(ped, false));
@@ -1348,7 +1346,7 @@ uint64_t REQUEST_STREAMED_TEXTURE_DICT_hook(uint64_t data) {
 	char *textureDict = (char*)*(uint64_t*)(loc);
 	char *textureName = (char*)*(uint64_t*)(loc + 0x8);
 
-	int hash = GAMEPLAY::GET_HASH_KEY( textureName);
+	int hash = MISC::GET_HASH_KEY( textureName);
 
 	bool textureAlreadyLogged = false;
 	for (auto i = textureList.begin(); i != textureList.end(); ++i)
@@ -1419,7 +1417,7 @@ uintptr_t(*GetNativeAddress)(uint64_t hash) = nullptr;
 
 void Init()
 	{
-		srand(time(NULL));
+		srand(static_cast<unsigned int>(time(NULL)));
 
 		//GetGlobalPtr = getGlobal;
 		//Native::SetEssentialFunction(getAddress);
@@ -1499,7 +1497,7 @@ void Init()
 
 		bool* canChangeModel = (bool*)getGlobalPtr(1835009);
 		*canChangeModel = true;
-
+		//
 		//MENU_MAIN setup
 		static char *listMain[] = {
 			(char*)"Toggle Noclip",
@@ -1743,7 +1741,7 @@ void Init()
 		TickCpp();
 
 		static bool lpressed = false;//this is basically for 'just pressed' detection in this function only, might want to expand it later on
-		if ((GetKeyState(VK_LBUTTON) & 0x80) != 0 || (controllerMode && CONTROLS::IS_CONTROL_PRESSED(INPUT_GROUP_CONTROLLER, Buttons::Button_R2))) {
+		if ((GetKeyState(VK_LBUTTON) & 0x80) != 0 || (controllerMode && PAD::IS_CONTROL_PRESSED(INPUT_GROUP_CONTROLLER, Buttons::Button_R2))) {
 			LCJustPressed = true;
 			if (LCpressed == true) {
 				LCJustPressed = false;
@@ -1768,7 +1766,7 @@ void Init()
 			LCpressed = false;
 			lpressed = false;
 		}
-		if ((GetKeyState(VK_RBUTTON) & 0x80) != 0 || (controllerMode && CONTROLS::IS_CONTROL_PRESSED(INPUT_GROUP_CONTROLLER, Buttons::Button_L2))) {
+		if ((GetKeyState(VK_RBUTTON) & 0x80) != 0 || (controllerMode && PAD::IS_CONTROL_PRESSED(INPUT_GROUP_CONTROLLER, Buttons::Button_L2))) {
 			RCJustPressed = true;
 			if (RCpressed == true) {
 				RCJustPressed = false;
@@ -1782,6 +1780,7 @@ void Init()
 			//not pressed
 			forge::blacklistItem = -1;
 		}
+
 	}
 
 
@@ -1789,7 +1788,7 @@ void Init()
 
 	//https://github.com/esc0rtd3w/illicit-sprx/blob/master/main/illicit/buttons.h
 	float getLeftAxisX() {
-		int value = CONTROLS::GET_CONTROL_VALUE(INPUT_GROUP_CONTROLLER, INPUT_MOVE_LR);
+		int value = PAD::GET_CONTROL_VALUE(INPUT_GROUP_CONTROLLER, INPUT_MOVE_LR);
 		value = value - 127;
 		float v = (float)value / 127.0f;
 		//-1 is fully left
@@ -1802,7 +1801,7 @@ void Init()
 		//return CONTROLS::GET_CONTROL_NORMAL(0, INPUT_SCRIPT_LEFT_AXIS_X);
 	}
 	float getLeftAxisY() {
-		int value = CONTROLS::GET_CONTROL_VALUE(INPUT_GROUP_CONTROLLER, INPUT_MOVE_UD);
+		int value = PAD::GET_CONTROL_VALUE(INPUT_GROUP_CONTROLLER, INPUT_MOVE_UD);
 		value = value - 127;
 		float v = (float)value / 127.0f;
 		v = v * -1;//flip it so we get standard postitive is up and negative is down (like normal graphs)
@@ -1835,22 +1834,23 @@ void Init()
 		CONTROLS::SET_INPUT_EXCLUSIVE(INPUT_GROUP_CONTROLLER, INPUT_MOVE_UD);*/
 
 		if (simpleMenu.isOpen()) {
-			CONTROLS::SET_INPUT_EXCLUSIVE(INPUT_GROUP_CONTROLLER, Buttons::Dpad_Up);
-			CONTROLS::SET_INPUT_EXCLUSIVE(INPUT_GROUP_CONTROLLER, Buttons::Dpad_Down);
-			CONTROLS::SET_INPUT_EXCLUSIVE(INPUT_GROUP_CONTROLLER, Buttons::Dpad_Left);
-			CONTROLS::SET_INPUT_EXCLUSIVE(INPUT_GROUP_CONTROLLER, Buttons::Dpad_Right);
+
+			PAD::SET_INPUT_EXCLUSIVE(INPUT_GROUP_CONTROLLER, Buttons::Dpad_Up);
+			PAD::SET_INPUT_EXCLUSIVE(INPUT_GROUP_CONTROLLER, Buttons::Dpad_Down);
+			PAD::SET_INPUT_EXCLUSIVE(INPUT_GROUP_CONTROLLER, Buttons::Dpad_Left);
+			PAD::SET_INPUT_EXCLUSIVE(INPUT_GROUP_CONTROLLER, Buttons::Dpad_Right);
 
 			
-			CONTROLS::SET_INPUT_EXCLUSIVE(INPUT_GROUP_CONTROLLER, Buttons::Button_Circle);
-			CONTROLS::SET_INPUT_EXCLUSIVE(INPUT_GROUP_CONTROLLER, Buttons::Button_X);
-			CONTROLS::SET_INPUT_EXCLUSIVE(INPUT_GROUP_CONTROLLER, Buttons::Button_Square);
-			CONTROLS::SET_INPUT_EXCLUSIVE(INPUT_GROUP_CONTROLLER, Buttons::Button_Triangle);
-			CONTROLS::SET_INPUT_EXCLUSIVE(INPUT_GROUP_CONTROLLER, Buttons::Button_L1);
-			CONTROLS::SET_INPUT_EXCLUSIVE(INPUT_GROUP_CONTROLLER, Buttons::Button_L2);
-			CONTROLS::SET_INPUT_EXCLUSIVE(INPUT_GROUP_CONTROLLER, Buttons::Button_L3);
-			CONTROLS::SET_INPUT_EXCLUSIVE(INPUT_GROUP_CONTROLLER, Buttons::Button_R1);
-			CONTROLS::SET_INPUT_EXCLUSIVE(INPUT_GROUP_CONTROLLER, Buttons::Button_R2);
-			CONTROLS::SET_INPUT_EXCLUSIVE(INPUT_GROUP_CONTROLLER, Buttons::Button_R3);
+			PAD::SET_INPUT_EXCLUSIVE(INPUT_GROUP_CONTROLLER, Buttons::Button_Circle);
+			PAD::SET_INPUT_EXCLUSIVE(INPUT_GROUP_CONTROLLER, Buttons::Button_X);
+			PAD::SET_INPUT_EXCLUSIVE(INPUT_GROUP_CONTROLLER, Buttons::Button_Square);
+			PAD::SET_INPUT_EXCLUSIVE(INPUT_GROUP_CONTROLLER, Buttons::Button_Triangle);
+			PAD::SET_INPUT_EXCLUSIVE(INPUT_GROUP_CONTROLLER, Buttons::Button_L1);
+			PAD::SET_INPUT_EXCLUSIVE(INPUT_GROUP_CONTROLLER, Buttons::Button_L2);
+			PAD::SET_INPUT_EXCLUSIVE(INPUT_GROUP_CONTROLLER, Buttons::Button_L3);
+			PAD::SET_INPUT_EXCLUSIVE(INPUT_GROUP_CONTROLLER, Buttons::Button_R1);
+			PAD::SET_INPUT_EXCLUSIVE(INPUT_GROUP_CONTROLLER, Buttons::Button_R2);
+			PAD::SET_INPUT_EXCLUSIVE(INPUT_GROUP_CONTROLLER, Buttons::Button_R3);
 
 			/*CONTROLS::DISABLE_CONTROL_ACTION(INPUT_GROUP_CONTROLLER, Buttons::Dpad_Up, true);
 			CONTROLS::DISABLE_CONTROL_ACTION(INPUT_GROUP_CONTROLLER, Buttons::Dpad_Down, true);
@@ -1893,77 +1893,81 @@ void Init()
 	void OnKeyUp(uint32_t key);
 	void controllerInputKeyDownWrapper() {
 		enableDisableControls();
+		
 		//F2 = r1 and square
-		if (CONTROLS::IS_CONTROL_JUST_PRESSED(INPUT_GROUP_CONTROLLER, Button_R1) && CONTROLS::IS_CONTROL_PRESSED(INPUT_GROUP_CONTROLLER, Button_Square)) {
-			OnKeyDown(0x71);
-		}
-		if (CONTROLS::IS_CONTROL_JUST_RELEASED(INPUT_GROUP_CONTROLLER, Button_R1) && CONTROLS::IS_CONTROL_RELEASED(INPUT_GROUP_CONTROLLER, Button_Square)) {
-			OnKeyUp(0x71);
+		if (PAD::IS_CONTROL_PRESSED(INPUT_GROUP_CONTROLLER, Button_R1))
+		{
+			if (PAD::IS_CONTROL_JUST_PRESSED(INPUT_GROUP_CONTROLLER, Button_Square))
+			{
+				OnKeyDown(0x71);
+				OnKeyUp(0x71);
+			}
 		}
 
+
 		//back key VK_BACK = INPUT_FRONTEND_CANCEL
-		if (CONTROLS::IS_CONTROL_JUST_PRESSED(INPUT_GROUP_CONTROLLER, Button_Circle)) {
+		if (PAD::IS_CONTROL_JUST_PRESSED(INPUT_GROUP_CONTROLLER, Button_Circle)) {
 			//print("\n\n\n          Circle Pressed");
 			OnKeyDown(VK_BACK);
 		}
-		if (CONTROLS::IS_CONTROL_JUST_RELEASED(INPUT_GROUP_CONTROLLER, Button_Circle)) {
+		if (PAD::IS_CONTROL_JUST_RELEASED(INPUT_GROUP_CONTROLLER, Button_Circle)) {
 			OnKeyUp(VK_BACK);
 		}
 
 
 		//shift key = INPUT_SPRINT
-		if (CONTROLS::IS_CONTROL_JUST_PRESSED(INPUT_GROUP_CONTROLLER, Button_R1)) {
+		if (PAD::IS_CONTROL_JUST_PRESSED(INPUT_GROUP_CONTROLLER, Button_R1)) {
 			OnKeyDown(0x10);
 		}
-		if (CONTROLS::IS_CONTROL_JUST_RELEASED(INPUT_GROUP_CONTROLLER, Button_R1)) {
+		if (PAD::IS_CONTROL_JUST_RELEASED(INPUT_GROUP_CONTROLLER, Button_R1)) {
 			OnKeyUp(0x10);
 		}
 
 		//VK_UP
-		if (CONTROLS::IS_CONTROL_JUST_PRESSED(INPUT_GROUP_CONTROLLER, Dpad_Up)) {
+		if (PAD::IS_CONTROL_JUST_PRESSED(INPUT_GROUP_CONTROLLER, Dpad_Up)) {
 			OnKeyDown(VK_UP);
 		}
-		if (CONTROLS::IS_CONTROL_JUST_RELEASED(INPUT_GROUP_CONTROLLER, Dpad_Up)) {
+		if (PAD::IS_CONTROL_JUST_RELEASED(INPUT_GROUP_CONTROLLER, Dpad_Up)) {
 			OnKeyUp(VK_UP);
 		}
 
 		//VK_DOWN
-		if (CONTROLS::IS_CONTROL_JUST_PRESSED(INPUT_GROUP_CONTROLLER, Dpad_Down)) {
+		if (PAD::IS_CONTROL_JUST_PRESSED(INPUT_GROUP_CONTROLLER, Dpad_Down)) {
 			OnKeyDown(VK_DOWN);
 		}
-		if (CONTROLS::IS_CONTROL_JUST_RELEASED(INPUT_GROUP_CONTROLLER, Dpad_Down)) {
+		if (PAD::IS_CONTROL_JUST_RELEASED(INPUT_GROUP_CONTROLLER, Dpad_Down)) {
 			OnKeyUp(VK_DOWN);
 		}
 
 		//VK_LEFT
-		if (CONTROLS::IS_CONTROL_JUST_PRESSED(INPUT_GROUP_CONTROLLER, Dpad_Left)) {
+		if (PAD::IS_CONTROL_JUST_PRESSED(INPUT_GROUP_CONTROLLER, Dpad_Left)) {
 			OnKeyDown(VK_LEFT);
 		}
-		if (CONTROLS::IS_CONTROL_JUST_RELEASED(INPUT_GROUP_CONTROLLER, Dpad_Left)) {
+		if (PAD::IS_CONTROL_JUST_RELEASED(INPUT_GROUP_CONTROLLER, Dpad_Left)) {
 			OnKeyUp(VK_LEFT);
 		}
 
 		//VK_RIGHT
-		if (CONTROLS::IS_CONTROL_JUST_PRESSED(INPUT_GROUP_CONTROLLER, Dpad_Right)) {
+		if (PAD::IS_CONTROL_JUST_PRESSED(INPUT_GROUP_CONTROLLER, Dpad_Right)) {
 			OnKeyDown(VK_RIGHT);
 		}
-		if (CONTROLS::IS_CONTROL_JUST_RELEASED(INPUT_GROUP_CONTROLLER, Dpad_Right)) {
+		if (PAD::IS_CONTROL_JUST_RELEASED(INPUT_GROUP_CONTROLLER, Dpad_Right)) {
 			OnKeyUp(VK_RIGHT);
 		}
 
 		//N key (for keyboard input) = square
-		if (CONTROLS::IS_CONTROL_JUST_PRESSED(INPUT_GROUP_CONTROLLER, Button_Square)) {
+		if (PAD::IS_CONTROL_JUST_PRESSED(INPUT_GROUP_CONTROLLER, Button_Square)) {
 			OnKeyDown(0x4E);
 		}
-		if (CONTROLS::IS_CONTROL_JUST_RELEASED(INPUT_GROUP_CONTROLLER, Button_Square)) {
+		if (PAD::IS_CONTROL_JUST_RELEASED(INPUT_GROUP_CONTROLLER, Button_Square)) {
 			OnKeyUp(0x4E);
 		}
 
 		//VK_RETURN (select) = X
-		if (CONTROLS::IS_CONTROL_JUST_PRESSED(INPUT_GROUP_CONTROLLER, Button_X)) {
+		if (PAD::IS_CONTROL_JUST_PRESSED(INPUT_GROUP_CONTROLLER, Button_X)) {
 			OnKeyDown(VK_RETURN);
 		}
-		if (CONTROLS::IS_CONTROL_JUST_RELEASED(INPUT_GROUP_CONTROLLER, Button_X)) {
+		if (PAD::IS_CONTROL_JUST_RELEASED(INPUT_GROUP_CONTROLLER, Button_X)) {
 			OnKeyUp(VK_RETURN);
 		}
 
@@ -2000,38 +2004,38 @@ void Init()
 		}
 
 		//VK_CONTROL for go down in ufo
-		if (CONTROLS::IS_CONTROL_JUST_PRESSED(INPUT_GROUP_CONTROLLER, Button_L3)) {
+		if (PAD::IS_CONTROL_JUST_PRESSED(INPUT_GROUP_CONTROLLER, Button_L3)) {
 			//print("\n\n\n          L3 Pressed");
 			OnKeyDown(VK_CONTROL);
 		}
-		if (CONTROLS::IS_CONTROL_JUST_RELEASED(INPUT_GROUP_CONTROLLER, Button_L3)) {
+		if (PAD::IS_CONTROL_JUST_RELEASED(INPUT_GROUP_CONTROLLER, Button_L3)) {
 			OnKeyUp(VK_CONTROL);
 		}
 
 		//F key 0x46
-		if (CONTROLS::IS_CONTROL_JUST_PRESSED(INPUT_GROUP_CONTROLLER, Button_Square)) {
+		if (PAD::IS_CONTROL_JUST_PRESSED(INPUT_GROUP_CONTROLLER, Button_Square)) {
 			//print("\n\n\n          Square Pressed");
 			OnKeyDown(0x46);
 		}
-		if (CONTROLS::IS_CONTROL_JUST_RELEASED(INPUT_GROUP_CONTROLLER, Button_Square)) {
+		if (PAD::IS_CONTROL_JUST_RELEASED(INPUT_GROUP_CONTROLLER, Button_Square)) {
 			OnKeyUp(0x46);
 		}
 
 		//VK_SPACE for go up in ufo
-		if (CONTROLS::IS_CONTROL_JUST_PRESSED(INPUT_GROUP_CONTROLLER, Button_X)) {
+		if (PAD::IS_CONTROL_JUST_PRESSED(INPUT_GROUP_CONTROLLER, Button_X)) {
 			//print("\n\n\n          X Pressed");
 			OnKeyDown(VK_SPACE);
 		}
-		if (CONTROLS::IS_CONTROL_JUST_RELEASED(INPUT_GROUP_CONTROLLER, Button_X)) {
+		if (PAD::IS_CONTROL_JUST_RELEASED(INPUT_GROUP_CONTROLLER, Button_X)) {
 			OnKeyUp(VK_SPACE);
 		}
 
 		//0x45 E key (get in and exit ufo)
-		if (CONTROLS::IS_CONTROL_JUST_PRESSED(INPUT_GROUP_CONTROLLER, Button_Triangle)) {
+		if (PAD::IS_CONTROL_JUST_PRESSED(INPUT_GROUP_CONTROLLER, Button_Triangle)) {
 			//print("\n\n\n          Triangle Pressed");
 			OnKeyDown(0x45);
 		}
-		if (CONTROLS::IS_CONTROL_JUST_RELEASED(INPUT_GROUP_CONTROLLER, Button_Triangle)) {
+		if (PAD::IS_CONTROL_JUST_RELEASED(INPUT_GROUP_CONTROLLER, Button_Triangle)) {
 			OnKeyUp(0x45);
 		}
 	}
@@ -2174,7 +2178,7 @@ void main()
 
 		bool previousInput = controllerMode; 
 
-		controllerMode = !CONTROLS::_IS_INPUT_DISABLED(2);
+		controllerMode = !PAD::_IS_USING_KEYBOARD(2);
 
 		if (controllerMode != previousInput)
 			inputModeChanged = true;
@@ -2194,6 +2198,7 @@ void main()
 		}
 		else
 			controllerInputKeyDownWrapper();//check for controller inputsss
+
 
 		Tick();
 		//update(); this is for those dumb entity boxes

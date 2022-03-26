@@ -7,37 +7,34 @@
 #pragma once
 
 #include <windows.h>
-
 #include <cstdint>
 #include <unordered_map>
 #include <type_traits>
 
-typedef DWORD Void;
-typedef DWORD Any;
-typedef DWORD uint;
-typedef DWORD Hash;
-typedef int Entity;
-typedef int Player;
-typedef int FireId;
-typedef int Ped;
-typedef int Vehicle;
-typedef int Cam;
-typedef int CarGenerator;
-typedef int Group;
-typedef int Train;
-typedef int Pickup;
-typedef int Object;
-typedef int Weapon;
-typedef int Interior;
-typedef int Blip;
-typedef int Texture;
-typedef int TextureDict;
-typedef int CoverPoint;
-typedef int Camera;
-typedef int TaskSequence;
-typedef int ColourIndex;
-typedef int Sphere;
-typedef int ScrHandle;
+using Any = uint64_t;
+using Void = uint64_t;
+using ScrHandle = int;
+
+using AnimScene = int;
+using Blip = int;
+using Cam = int;
+using Entity = ScrHandle;
+using FireId = int;
+using Hash = unsigned int;
+using Interior = int;
+using ItemSet = ScrHandle;
+using Object = ScrHandle;
+using Ped = ScrHandle;
+using PersChar = ScrHandle;
+using Pickup = int;
+using Player = unsigned int;
+using PopZone = int;
+using Prompt = int;
+using PropSet = int;
+using Vehicle = ScrHandle;
+using Volume = ScrHandle;
+
+
 
 #define ALIGN8 __declspec(align(8))
 

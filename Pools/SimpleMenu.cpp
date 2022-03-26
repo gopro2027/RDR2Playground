@@ -31,7 +31,6 @@ void SimpleMenu::renderFromAtoB(int startOption, int endOption, int selectedOpti
 		
 
 
-
 		for (int i = startOption; i < endOption; i++) {
 
 			int textr, textg, textb;
@@ -55,7 +54,9 @@ void SimpleMenu::renderFromAtoB(int startOption, int endOption, int selectedOpti
 
 			DrawGameText(this->x + textPadding, this->y + height * (i - startOption), str, textr, textg, textb, 255, 0.35f, 0.35f, JUSTIFICATION_LEFT, FONT_CAPS);
 			if (optionData != nullptr) {
-				DrawGameText(this->x + width - textPadding, this->y + height * (i - startOption), optionData, textr, textg, textb, 255, 0.35f, 0.35f, JUSTIFICATION_RIGHT, FONT_RDR2);
+				//substracting the x coord by 0.045 as an alternative to fixing justification
+				//justification pattern got outdated and can no longer be used (check DrawGameText)
+				DrawGameText(this->x + width - textPadding - 0.045f, this->y + height * (i - startOption), optionData, textr, textg, textb, 255, 0.35f, 0.35f, JUSTIFICATION_RIGHT, FONT_RDR2);
 			}
 			DrawGameRect(this->x + width / 2, this->y + height / 2 + height * (i - startOption), width, height, rectr, rectg, rectb, backgroundOpacity);
 		}
@@ -102,7 +103,6 @@ void SimpleMenu::renderFromAtoB(int startOption, int endOption, int selectedOpti
 		//draw the grey areas above and below
 		DrawGameRect(this->x + width + widthOfScrollbar / 2.0f, this->y + topYPos / 2.0f, widthOfScrollbar, topYPos, 0, 0, 0, backgroundOpacity);//top
 		DrawGameRect(this->x + width + widthOfScrollbar / 2.0f, this->y + topYPos + barHeight + (heightOfMenu - (topYPos + barHeight))/2.0f, widthOfScrollbar, (heightOfMenu - (topYPos + barHeight)), 0, 0, 0, backgroundOpacity);
-
 	}
 }
 
