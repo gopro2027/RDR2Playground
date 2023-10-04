@@ -59,9 +59,6 @@
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="resource.h" />
-    <ClInclude Include="inc\natives.h">
-      <Filter>include</Filter>
-    </ClInclude>
     <ClInclude Include="scripthook\inc\main.h">
       <Filter>include</Filter>
     </ClInclude>
@@ -74,6 +71,7 @@
     <ClInclude Include="scripthook\inc\types.h">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="scripthook\inc\natives.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="include">

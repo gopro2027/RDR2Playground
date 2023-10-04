@@ -143,9 +143,9 @@ void DrawGameText(float x, float y, char* text, uint8_t r, uint8_t g, uint8_t b,
 {
 	//float fX = x / (float)1920;
 	//float fY = y / (float)1080;
-	UIDEBUG::_BG_SET_TEXT_SCALE(scaleX, scaleY);//0.342f
-	HUD::_SET_TEXT_COLOR(r, g, b, a);
-	UIDEBUG::SET_TEXT_CENTRE(!justification); //alternative to fixing text justification
+	UI::SET_TEXT_SCALE(scaleX, scaleY);//0.342f 
+	UI::SET_TEXT_COLOR_RGBA(r, g, b, a);  
+	UI::SET_TEXT_CENTRE(!justification); //alternative to fixing text justification
 	//UI::SET_TEXT_CENTRE( center);
 	/**getTextJustification() = justification;
 
@@ -165,8 +165,8 @@ void DrawGameText(float x, float y, char* text, uint8_t r, uint8_t g, uint8_t b,
 	//getTextProperties()->TextOutline = true;
 	
 	getTextProperties()->Font = font;*/
-	const char* varString = MISC::VAR_STRING(10, "LITERAL_STRING", text);
-	UIDEBUG::_BG_DISPLAY_TEXT(varString, x, y);
+	char* varString = GAMEPLAY::CREATE_STRING(10, "LITERAL_STRING", text);
+	UI::DRAW_TEXT(varString, x, y);
 }
 
 void DrawGameSprite(float x, float y, float width, float height, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
@@ -177,8 +177,8 @@ void DrawGameSprite(float x, float y, float width, float height, uint8_t r, uint
 	//DRAW_SPRITE( textureDict, textureName, x, y, width, height, 0.0f/*rot*/, r, g, b, a, true);
 
 	
-	if (!TXD::HAS_STREAMED_TEXTURE_DICT_LOADED("boot_flow"))
-		TXD::REQUEST_STREAMED_TEXTURE_DICT("boot_flow", 0);
+	if (!TEXTURE::HAS_STREAMED_TEXTURE_DICT_LOADED("boot_flow"))
+		TEXTURE::REQUEST_STREAMED_TEXTURE_DICT("boot_flow", 0);
 
 	GRAPHICS::DRAW_SPRITE("boot_flow", "selection_box_bg_1d", x, y, width, height, 0.0f/*rot*/, r, g, b, a, true);
 }
@@ -224,7 +224,7 @@ bool HasModelLoaded(uint32_t model)
 
 int SpawnLoadedVehicle(char* vehName)
 {
-	uint32_t model = MISC::GET_HASH_KEY(vehName);
+	uint32_t model = GAMEPLAY::GET_HASH_KEY(vehName);
 	if (myLastVehicle)
 	{
 		VEHICLE::DELETE_VEHICLE(&myLastVehicle);
@@ -240,12 +240,12 @@ int SpawnLoadedVehicle(char* vehName)
 
 int SpawnLoadedPed(char* pedName, Vector3 myPos)
 {
-	uint32_t model = MISC::GET_HASH_KEY(pedName);
+	uint32_t model = GAMEPLAY::GET_HASH_KEY(pedName);
 
 	uint32_t createdPed = PED::CREATE_PED(model, myPos.x, myPos.y, myPos.z, 0.f, false, false, false, false);
 	ENTITY::SET_ENTITY_VISIBLE(createdPed, true);
 	ENTITY::SET_ENTITY_ALPHA(createdPed, 255, false);
-	PED::_SET_RANDOM_OUTFIT_VARIATION(createdPed, true);
+	PED::SET_PED_RANDOM_COMPONENT_VARIATION(createdPed, true);
 	ENTITY::SET_ENTITY_AS_MISSION_ENTITY(createdPed, false, false);//make it despawn
 	int createdPedCopy = createdPed;
 	ENTITY::SET_ENTITY_AS_NO_LONGER_NEEDED(&createdPedCopy);
@@ -261,7 +261,7 @@ int SpawnLoadedObject(int objectHash, Vector3 myPos)
 	uint32_t createdPed = OBJECT::CREATE_OBJECT(model, myPos.x, myPos.y, myPos.z, 1, 1, 0, 0, 1);
 	ENTITY::SET_ENTITY_VISIBLE(createdPed, true);
 	ENTITY::SET_ENTITY_ALPHA(createdPed, 255, false);
-	PED::_SET_RANDOM_OUTFIT_VARIATION(createdPed, true);
+	PED::SET_PED_RANDOM_COMPONENT_VARIATION(createdPed, true);
 	ENTITY::SET_ENTITY_AS_MISSION_ENTITY(createdPed, false, false);//make it despawn
 	int createdPedCopy = createdPed;
 	ENTITY::SET_ENTITY_AS_NO_LONGER_NEEDED(&createdPedCopy);
@@ -272,7 +272,7 @@ int SpawnLoadedObject(int objectHash, Vector3 myPos)
 
 void ChangeLoadedPlayerModel(char* modelName)
 {
-	uint32_t model = MISC::GET_HASH_KEY(modelName);
+	uint32_t model = GAMEPLAY::GET_HASH_KEY(modelName);
 
 	PLAYER::SET_PLAYER_MODEL(0, model, true);
 
@@ -280,7 +280,7 @@ void ChangeLoadedPlayerModel(char* modelName)
 
 	ENTITY::SET_ENTITY_VISIBLE(myPed, true);
 	ENTITY::SET_ENTITY_ALPHA(myPed, 255, false);
-	PED::_SET_RANDOM_OUTFIT_VARIATION(myPed, true);
+	PED::SET_PED_RANDOM_COMPONENT_VARIATION(myPed, true);
 
 	STREAMING::SET_MODEL_AS_NO_LONGER_NEEDED(model);
 }
@@ -293,17 +293,17 @@ void TeleportPlayer(float x, float y, float z)
 
 void SetWeather(char* weather)
 {
-	MISC::_SET_WEATHER_TYPE_TRANSITION(MISC::GET_HASH_KEY(weather), MISC::GET_HASH_KEY(weather), 0.5f, true);
+	GAMEPLAY::_SET_WEATHER_TYPE_TRANSITION(GAMEPLAY::GET_HASH_KEY(weather), GAMEPLAY::GET_HASH_KEY(weather), 0.5f, true);
 }
 
 void AddToClockTime(int hours, int minutes, int seconds)
 {
-	CLOCK::ADD_TO_CLOCK_TIME(hours, minutes, seconds);
+	TIME::ADD_TO_CLOCK_TIME(hours, minutes, seconds);
 }
 
 void SpawnPed(const char* model, std::function<void(int)> callback, Vector3* location)
 {
-	LoadModel(MISC::GET_HASH_KEY((char*)model), [model, callback, location] {
+	LoadModel(GAMEPLAY::GET_HASH_KEY((char*)model), [model, callback, location] {
 		uint32_t myPed = PLAYER::GET_PLAYER_PED(0);
 		static Vector3 myPos = { 0,0,0 };
 		myPos = ENTITY::GET_ENTITY_COORDS(myPed, false, false/*unknown*/);
@@ -333,7 +333,7 @@ void SpawnObject(int model, Vector3* location, std::function<void(int)> callback
 
 void ChangePlayerModel(const char* model)
 {
-	LoadModel(MISC::GET_HASH_KEY((char*)model), [model] {
+	LoadModel(GAMEPLAY::GET_HASH_KEY((char*)model), [model] {
 		ChangeLoadedPlayerModel((char*)model);
 		});
 }
@@ -341,7 +341,7 @@ void ChangePlayerModel(const char* model)
 
 void SpawnVehicle(const char* vehName, std::function<void(int)> callback)
 {
-	LoadModel(MISC::GET_HASH_KEY((char*)vehName), [vehName, callback] {
+	LoadModel(GAMEPLAY::GET_HASH_KEY((char*)vehName), [vehName, callback] {
 		int veh = SpawnLoadedVehicle((char*)vehName);
 		if (callback != nullptr)
 			callback(veh);
@@ -351,7 +351,7 @@ void SpawnVehicle(const char* vehName, std::function<void(int)> callback)
 bool keyboardOpen = false;
 std::function<void(char*)> keyboardcallback = nullptr;
 void KeyboardInput(std::function<void(char*)> callback, char* defaultText) {
-	MISC::DISPLAY_ONSCREEN_KEYBOARD(1, "FMMC_MPM_NA", "", defaultText, "", "", "", 256); // Display the dialog text
+	GAMEPLAY::DISPLAY_ONSCREEN_KEYBOARD(1, "FMMC_MPM_NA", "", defaultText, "", "", "", 256); // Display the dialog text
 	keyboardOpen = true;
 	keyboardcallback = callback;
 
@@ -359,19 +359,19 @@ void KeyboardInput(std::function<void(char*)> callback, char* defaultText) {
 
 void KeyboardTick() {
 	if (keyboardOpen) {
-		PAD::DISABLE_ALL_CONTROL_ACTIONS(0);
+		CONTROLS::DISABLE_ALL_CONTROL_ACTIONS(0);
 		/*
 		0 - User still editing
 		1 - User has finished editing
 		2 - User has canceled editing
 		3 - Keyboard isn't active
 		*/
-		int keyboardID = MISC::UPDATE_ONSCREEN_KEYBOARD();
+		int keyboardID = GAMEPLAY::UPDATE_ONSCREEN_KEYBOARD();
 		if (keyboardID != 0) {
 			keyboardOpen = false;
 			if (keyboardID == 1) {
 				//successful finish editing
-				const char* text = MISC::GET_ONSCREEN_KEYBOARD_RESULT();
+				const char* text = GAMEPLAY::GET_ONSCREEN_KEYBOARD_RESULT();
 				keyboardcallback(_strdup(text));
 			}
 		}
@@ -379,11 +379,11 @@ void KeyboardTick() {
 }
 
 char* keyboardInput(char* defaultText) {
-	MISC::DISPLAY_ONSCREEN_KEYBOARD(1, "FMMC_MPM_NA", "", defaultText, "", "", "", 256);
+	GAMEPLAY::DISPLAY_ONSCREEN_KEYBOARD(1, "FMMC_MPM_NA", "", defaultText, "", "", "", 256);
 	int keyboardID = 0;
-	while ((keyboardID = MISC::UPDATE_ONSCREEN_KEYBOARD()) == 0) WAIT(1);
+	while ((keyboardID = GAMEPLAY::UPDATE_ONSCREEN_KEYBOARD()) == 0) WAIT(1);
 	if (keyboardID == 1) {
-		return _strdup(MISC::GET_ONSCREEN_KEYBOARD_RESULT());
+		return _strdup(GAMEPLAY::GET_ONSCREEN_KEYBOARD_RESULT());
 	}
 	return nullptr;//not a success
 }
@@ -465,7 +465,7 @@ void runOnAllNearbyPedsToPlayer(std::function<void(int)> callback) {
 	nearbyEnts arr;
 	arr.size = nearbyPedArraySize;
 	int ped = PLAYER::PLAYER_PED_ID();
-	int size = PED::GET_PED_NEARBY_PEDS(ped, (Any*)&arr, ped, 0/*unk*/);
+	int size = PED::GET_PED_NEARBY_PEDS(ped, (int*) & arr, ped, 0/*unk*/);
 	for (int i = 0; i < size; i++) {
 		callback(arr.entities[i]);
 	}
@@ -475,7 +475,7 @@ void runOnAllNearbyVehiclesToPlayer(std::function<void(int)> callback) {
 	nearbyEnts arr;
 	arr.size = nearbyPedArraySize;
 	int ped = PLAYER::PLAYER_PED_ID();
-	int size = PED::GET_PED_NEARBY_VEHICLES(ped, (Any*)&arr);
+	int size = PED::GET_PED_NEARBY_VEHICLES(ped, (int*)&arr);
 	for (int i = 0; i < size; i++) {
 		callback(arr.entities[i]);
 	}
@@ -629,7 +629,7 @@ void mountPatch() {
 
 void testMount2(int targetPed) {
 	int myPed = PLAYER::PLAYER_PED_ID();
-	PED::_IS_MOUNT_SEAT_FREE(myPed, targetPed);
+	//PED::_IS_MOUNT_SEAT_FREE(myPed, targetPed);
 }
 
 
@@ -769,7 +769,7 @@ void giveAllWeapons() {
 	//	WEAPON::GIVE_DELAYED_WEAPON_TO_PED(PLAYER::PLAYER_PED_ID(), GAMEPLAY::GET_HASH_KEY(allWeapons[i]), -1, true, 0x2cd419dc);//-1 may be 9999
 	//}
 	for each (auto info in weaponInfos) {
-		Hash hash = MISC::GET_HASH_KEY(const_cast<char*>(("WEAPON_" + info.name).c_str()));
+		Hash hash = GAMEPLAY::GET_HASH_KEY(const_cast<char*>(("WEAPON_" + info.name).c_str()));
 		WEAPON::GIVE_DELAYED_WEAPON_TO_PED(PLAYER::PLAYER_PED_ID(), hash, -1, true, 0x2cd419dc);
 		WEAPON::SET_PED_AMMO(PLAYER::PLAYER_PED_ID(), hash, 1000);
 		WEAPON::SET_CURRENT_PED_WEAPON(PLAYER::PLAYER_PED_ID(), hash, 1, 0, 0, 0);
@@ -830,14 +830,14 @@ void setPedToCombatGroup(int ped) {
 	//addPedToZombieGroup(ped);
 
 
-	TASK::TASK_COMBAT_HATED_TARGETS(ped, 1000.0f);//unsure  0x8182B561A29BD597
+	AI::TASK_COMBAT_HATED_TARGETS_AROUND_PED(ped, 1000.0f, 0, 0);//unsure  0x8182B561A29BD597
 
 	PED::SET_PED_FLEE_ATTRIBUTES(ped, 0, 0);//unsure
 	PED::SET_PED_COMBAT_ATTRIBUTES(ped, 46, 1);//unsure
 
 	PED::SET_PED_KEEP_TASK(ped, true);//unsure
 
-	PED::_0x89F5E7ADECCCB49C(ped, "very_drunk");
+	PED::_0x89F5E7ADECCCB49C(ped, (Any*)"very_drunk");
 
 	ENTITY::SET_ENTITY_AS_MISSION_ENTITY(ped, true, true);//required to work for this method
 
@@ -853,7 +853,7 @@ void setPedToCombatJustMe(int ped) {
 
 	//SET_ENTITY_MAX_SPEED(ped,1.3f);
 
-	TASK::CLEAR_PED_TASKS_IMMEDIATELY(ped, true, true);//kick them from vehicle and reset
+	AI::CLEAR_PED_TASKS_IMMEDIATELY(ped, true, true);//kick them from vehicle and reset
 	//GIVE_WEAPON_TO_PED(ped, GAMEPLAY::GET_HASH_KEY("WEAPON_KNIFE"), 1, false, false);
 
 	if (PED::IS_PED_IN_ANY_VEHICLE(ped, true)) {
@@ -862,7 +862,7 @@ void setPedToCombatJustMe(int ped) {
 	}
 
 	PED::SET_BLOCKING_OF_NON_TEMPORARY_EVENTS(ped, true);
-	TASK::TASK_SET_BLOCKING_OF_NON_TEMPORARY_EVENTS(ped, true);
+	AI::TASK_SET_BLOCKING_OF_NON_TEMPORARY_EVENTS(ped, true);
 	PED::SET_PED_FLEE_ATTRIBUTES(ped, 0, 0);
 	PED::SET_PED_COMBAT_ATTRIBUTES(ped, 17, 1);
 	PED::SET_PED_TARGET_LOSS_RESPONSE(ped, 2);//search again if target is lost
@@ -872,11 +872,11 @@ void setPedToCombatJustMe(int ped) {
 	PED::SET_PED_COMBAT_ABILITY(ped, 2);//set to professional
 	PED::SET_PED_COMBAT_MOVEMENT(ped, 3);//set them to be offensive
 
-	TASK::TASK_LEAVE_VEHICLE(ped, PED::GET_VEHICLE_PED_IS_IN(ped, false), 0, 0);//256
+	AI::TASK_LEAVE_VEHICLE(ped, PED::GET_VEHICLE_PED_IS_IN(ped, false), 0, 0);//256
 
 //	REGISTER_TARGET( ped, PLAYER_PED_ID());//this doesn't seem to do anything
 
-	TASK::TASK_COMBAT_PED(ped, PLAYER::PLAYER_PED_ID(), 0, 16);//this is what does the trick
+	AI::TASK_COMBAT_PED(ped, PLAYER::PLAYER_PED_ID(), 0, 16);//this is what does the trick
 
 	//PED::SET_PED_IS_DRUNK(ped,true);//make them walk slow and stuff
 
@@ -884,7 +884,7 @@ void setPedToCombatJustMe(int ped) {
 	for (int i = 0; i < sizeof(BF) / 4; i++)
 		PED::SET_PED_COMBAT_ATTRIBUTES(ped, BF[i], true);
 
-	PED::_0x89F5E7ADECCCB49C(ped, "very_drunk");
+	PED::_0x89F5E7ADECCCB49C(ped, (Any*)"very_drunk");
 
 	ENTITY::SET_ENTITY_AS_MISSION_ENTITY(ped, false, false);
 
@@ -1098,7 +1098,7 @@ void lightningAmmoTick() {
 	if (lightningAmmoBool) {
 		//consolePrint((char*)"Lightning Ammo (Must be a rainy weather!!!) (Idea from Devil)");
 		runAtWeaponShot([](auto loc) {
-			MISC::_FORCE_LIGHTNING_FLASH_AT_COORDS(loc.x, loc.y, loc.z, -1.0f);
+			GAMEPLAY::_0x67943537D179597C(loc.x, loc.y, loc.z); // force lightning at coords
 			});
 	}
 }
@@ -1152,14 +1152,14 @@ void RapidFireLoop()
 	//if (RapidfireActive)
 	//	consolePrint((char*)"Rapid Fire");
 	static int Timeout = 0;
-	if (RapidfireActive == true && LCpressed == true && MISC::GET_GAME_TIMER() >= Timeout)
+	if (RapidfireActive == true && LCpressed == true && GAMEPLAY::GET_GAME_TIMER() >= Timeout)
 	{
 		Vector3 FromCoord = PED::GET_PED_BONE_COORDS(PLAYER::PLAYER_PED_ID(), 57005, 0, 0, 0);//probably a bad bone index
 		Vector3 ToCoord = GetCoordsInfrontOfCam(75);
 		Hash WeaponID = 0;//w_rifle_boltaction01
 		WEAPON::GET_CURRENT_PED_WEAPON(PLAYER::PLAYER_PED_ID(), &WeaponID, 0, 0, 0);
-		MISC::SHOOT_SINGLE_BULLET_BETWEEN_COORDS(FromCoord.x, FromCoord.y, FromCoord.z, ToCoord.x, ToCoord.y, ToCoord.z, 250, 0, /*GAMEPLAY::GET_HASH_KEY("WEAPON_RIFLE_SPRINGFIELD")*//*this weapon makes a better noise*/WeaponID, PLAYER::PLAYER_PED_ID(), 1, 0, 1, true/*idk*/);
-		Timeout = MISC::GET_GAME_TIMER() + 50;
+		GAMEPLAY::SHOOT_SINGLE_BULLET_BETWEEN_COORDS(FromCoord.x, FromCoord.y, FromCoord.z, ToCoord.x, ToCoord.y, ToCoord.z, 250, 0, /*GAMEPLAY::GET_HASH_KEY("WEAPON_RIFLE_SPRINGFIELD")*//*this weapon makes a better noise*/WeaponID, PLAYER::PLAYER_PED_ID(), 1, 0, 1, true/*idk*/);
+		Timeout = GAMEPLAY::GET_GAME_TIMER() + 50;
 	}
 }
 
@@ -1249,7 +1249,7 @@ namespace camShit {
 			if (doCamPos)
 				CAM::SET_CAM_COORD(cam, location.x, location.y, location.z);
 			if (doFocus)
-				STREAMING::SET_FOCUS_POS_AND_VEL(location.x, location.y, location.z, velocityForFocus.x, velocityForFocus.y, velocityForFocus.z);
+				STREAMING::_SET_FOCUS_AREA(location.x, location.y, location.z, velocityForFocus.x, velocityForFocus.y, velocityForFocus.z);
 			if (doLookat) {
 				CAM::POINT_CAM_AT_COORD(cam, rotation.x, rotation.y, rotation.z);
 				Vector3 r = CAM::GET_CAM_ROT(cam, 2);
@@ -1268,7 +1268,7 @@ namespace camShit {
 		doLookat = false;
 		if (setFocusOnArea) {
 			STREAMING::CLEAR_FOCUS();
-			STREAMING::SET_FOCUS_POS_AND_VEL(x, y, z, 0, 0, 0);//should be right I think
+			STREAMING::_SET_FOCUS_AREA(x, y, z, 0, 0, 0);//should be right I think
 		}
 		entity = 0;
 		if (!CAM::DOES_CAM_EXIST(cam))
@@ -1324,12 +1324,12 @@ namespace camShit {
 
 float getFPS() {
 	static float fps = 0;
-	fps = 1.0f / MISC::GET_FRAME_TIME();
+	fps = 1.0f / GAMEPLAY::GET_FRAME_TIME();
 	return fps;
 }
 
 float secondsPerFrame() {
-	return MISC::GET_FRAME_TIME();
+	return GAMEPLAY::GET_FRAME_TIME();
 }
 
 float gravityPerFrame() {
@@ -1567,7 +1567,7 @@ namespace predatorMissile {
 			//camShit::rotation.y = lookat.y;
 			//camShit::rotation.z = lookat.z;
 
-			MISC::GET_GROUND_Z_FOR_3D_COORD(location.x, location.y, initialZForGroundTest, &groundZ, true);//true makes water counted as ground
+			GAMEPLAY::GET_GROUND_Z_FOR_3D_COORD(location.x, location.y, initialZForGroundTest, &groundZ, true);//true makes water counted as ground
 
 			float heightAboveGround = (location.z) - groundZ;
 
@@ -1630,7 +1630,7 @@ namespace predatorMissile {
 
 
 void setPedKillable(int micah) {
-	TASK::TASK_SET_BLOCKING_OF_NON_TEMPORARY_EVENTS(micah, true);
+	AI::TASK_SET_BLOCKING_OF_NON_TEMPORARY_EVENTS(micah, true);
 	auto micahGroup = PED::CREATE_GROUP(0);
 	PED::SET_PED_AS_GROUP_LEADER(micah, micahGroup, true);
 	PED::SET_RELATIONSHIP_BETWEEN_GROUPS(
@@ -1891,18 +1891,18 @@ namespace ufomod {
 
 
 					//add blip
-					int blip = MAP::BLIP_ADD_FOR_ENTITY(-515518185, ent);
+					int blip = RADAR::_0x23F74C2FDA6E7C61(-515518185, ent); //blip add for entity
 					//-1327110633 is saddle bag
 					//RADAR::SET_BLIP_SPRITE(blip, -1739686743, 1);
 					//RADAR::SET_BLIP_NAME_FROM_TEXT_FILE(blip, GAMEPLAY::CREATE_STRING(10, "LITERAL_STRING", "UFO"));
-					MAP::SET_BLIP_NAME_FROM_TEXT_FILE(blip, "BLIP_DEBUG");//interesitng one
+					RADAR::SET_BLIP_NAME_FROM_TEXT_FILE(blip, "BLIP_DEBUG");//interesitng one
 
 					//one of these makes the icon pulse when it is first created
 					//another makes it so you can't click on it in the map (which is fine until I figure out how to set the name)
 					//idk what the other one does yet
-					MAP::BLIP_ADD_MODIFIER(blip, 580546400);//I beleive this one is pulsing
-					MAP::BLIP_ADD_MODIFIER(blip, -1878373110);//makes it not show up on menu list??? might actually have to do with the name
-					MAP::BLIP_ADD_MODIFIER(blip, 231194138);
+					RADAR::_0x662D364ABF16DE2F(blip, 580546400);//I beleive this one is pulsing    BLIP_ADD_MODIFIER
+					RADAR::_0x662D364ABF16DE2F(blip, -1878373110);//makes it not show up on menu list??? might actually have to do with the name
+					RADAR::_0x662D364ABF16DE2F(blip, 231194138);
 					});
 			}
 			weapon = Weapons::WEAPON_PASSIVE;
@@ -1918,7 +1918,7 @@ namespace ufomod {
 			//ufoID = -1;
 
 			float groundZ = 0;
-			MISC::GET_GROUND_Z_FOR_3D_COORD(position.x, position.y + 2.0f, 1000.0f, &groundZ, true);
+			GAMEPLAY::GET_GROUND_Z_FOR_3D_COORD(position.x, position.y + 2.0f, 1000.0f, &groundZ, true);
 			if (dontSetOutAfter == false)
 				ENTITY::SET_ENTITY_COORDS(ppid, position.x, position.y + 2.0f, groundZ, false, false, false, false);
 			dontSetOutAfter = false;
@@ -1926,7 +1926,7 @@ namespace ufomod {
 
 		//quick trick to make ufo spawn in front of me on ground and not actually be inside of it
 		if (enabled == true && startFresh) {
-			MISC::GET_GROUND_Z_FOR_3D_COORD(position.x, position.y, 1000.0f, &position.z, true);//basically set ufo on ground
+			GAMEPLAY::GET_GROUND_Z_FOR_3D_COORD(position.x, position.y, 1000.0f, &position.z, true);//basically set ufo on ground
 			position.z += 1.0f;//move up 1 so it's not like in the gorund
 
 			dontSetOutAfter = true;
@@ -1951,7 +1951,7 @@ namespace ufomod {
 
 	float getHeightAboveGround() {
 		float groundZ = 0;
-		MISC::GET_GROUND_Z_FOR_3D_COORD(position.x, position.y, 1000.0f, &groundZ, true);
+		GAMEPLAY::GET_GROUND_Z_FOR_3D_COORD(position.x, position.y, 1000.0f, &groundZ, true);
 		return position.z - groundZ;
 	}
 
@@ -1963,7 +1963,7 @@ namespace ufomod {
 		position.z += velocity.z;//*(30.0f / getFPS());
 
 		float groundZ = 0;
-		MISC::GET_GROUND_Z_FOR_3D_COORD(position.x, position.y, 1000.0f, &groundZ, true);//shoudl always return ground coord
+		GAMEPLAY::GET_GROUND_Z_FOR_3D_COORD(position.x, position.y, 1000.0f, &groundZ, true);//shoudl always return ground coord
 		groundZ += minHeight;
 		if (position.z < groundZ)
 			position.z = groundZ;
@@ -2051,13 +2051,13 @@ namespace ufomod {
 				Vector3 ToCoord = GET_COORDS_INFRONT(75).add(position)/*.add({0,0,5})*/;
 				//char buf[50];
 				//snprintf(buf, sizeof(buf), "WEAPON_RIFLE_SPRINGFIELD^%i", ammoType);
-				Hash WeaponID = MISC::GET_HASH_KEY("WEAPON_RIFLE_SPRINGFIELD");
-				MISC::SHOOT_SINGLE_BULLET_BETWEEN_COORDS(FromCoord.x, FromCoord.y, FromCoord.z, ToCoord.x, ToCoord.y, ToCoord.z, 250, 0, WeaponID, PLAYER::PLAYER_PED_ID(), 1, 0, 1, true/*idk*/);
+				Hash WeaponID = GAMEPLAY::GET_HASH_KEY("WEAPON_RIFLE_SPRINGFIELD");
+				GAMEPLAY::SHOOT_SINGLE_BULLET_BETWEEN_COORDS(FromCoord.x, FromCoord.y, FromCoord.z, ToCoord.x, ToCoord.y, ToCoord.z, 250, 0, WeaponID, PLAYER::PLAYER_PED_ID(), 1, 0, 1, true/*idk*/);
 
 			}
 			if (weapon == Weapons::WEAPON_BOMBER) {
 				float groundZ = 0;
-				MISC::GET_GROUND_Z_FOR_3D_COORD(position.x, position.y, 1000.0f, &groundZ, true);
+				GAMEPLAY::GET_GROUND_Z_FOR_3D_COORD(position.x, position.y, 1000.0f, &groundZ, true);
 				FIRE::ADD_OWNED_EXPLOSION(PLAYER::PLAYER_PED_ID(), position.x, position.y, groundZ, 22/*type*/, 100.0f/*damage*/, true/*audible*/, false/*invisible*/, 0.1f/*cam shake*/);
 			}
 			if (weapon == Weapons::WEAPON_GRAVITYWELL) {
@@ -2110,7 +2110,7 @@ namespace ufomod {
 						////actually this is never true here. The enter code is down below in loop
 					}
 					else {
-						AUDIO::_STOP_SOUND_WITH_NAME("Loop_A", "Ufos_Sounds");//this made it stop when I got out... nice
+						AUDIO::STOP_SOUND_FRONTEND("Loop_A", "Ufos_Sounds");//this made it stop when I got out... nice
 					}
 				}
 			}
@@ -2249,7 +2249,7 @@ namespace ufomod {
 			//weaponText = "BOMBER";
 
 			float groundZ = 0;
-			MISC::GET_GROUND_Z_FOR_3D_COORD(position.x, position.y, 1000.0f, &groundZ, true);
+			GAMEPLAY::GET_GROUND_Z_FOR_3D_COORD(position.x, position.y, 1000.0f, &groundZ, true);
 			float x, y;
 			GRAPHICS::GET_SCREEN_COORD_FROM_WORLD_COORD(position.x, position.y, groundZ, &x, &y);
 			drawBoxOutline(x, y, 0.01f, 0.002f, 255, 0, 0, 255);
@@ -2339,7 +2339,7 @@ namespace ufomod {
 			if (ufoID != -1 && ENTITY::DOES_ENTITY_EXIST(ufoID)) {
 				//check if nearby and pressing E to get back in
 				float groundZ = 0;
-				MISC::GET_GROUND_Z_FOR_3D_COORD(position.x, position.y, 1000.0f, &groundZ, true);
+				GAMEPLAY::GET_GROUND_Z_FOR_3D_COORD(position.x, position.y, 1000.0f, &groundZ, true);
 				Vector3 enterCoords = { position.x, position.y , groundZ };
 				float distance = enterCoords.sub(ENTITY::GET_ENTITY_COORDS(PLAYER::PLAYER_PED_ID(), true, false)).magnitude();
 				if (distance < 10.0f) {
@@ -2349,7 +2349,7 @@ namespace ufomod {
 						keyPressed[0x45] = false;
 						toggle();
 						if (enabled)
-							AUDIO::PLAY_SOUND_FROM_ENTITY("Loop_A", ufoID, "Ufos_Sounds", 0, 0, 0);
+							AUDIO::_0x6FB1DA3CA9DA7D90((Any*)"Loop_A", ufoID, (Any*)"Ufos_Sounds", 0, 0, 0); // play sound from entity
 					}
 				}
 				/*
@@ -2428,7 +2428,7 @@ int func_496(int iParam0)
 
 
 bool isPromptValid(int prompt) {
-	return HUD::_UIPROMPT_IS_VALID(prompt);
+	return UI::_0x347469FBDD1589A9(prompt);//valid
 }
 
 
@@ -2443,30 +2443,30 @@ void setPromptEnabled(int* prompt, bool enabled) {
 			UI::_0x8A0FB4D03A630D21(*prompt, false);
 			UI::_0x71215ACCFDE075EE(*prompt, false);
 		}*/
-		HUD::_UIPROMPT_SET_ENABLED(*prompt, enabled);//enable
+		UI::_0x8A0FB4D03A630D21(*prompt, enabled);//enable   _UIPROMPT_SET_ENABLED
 		//UI::_0x06565032897BA861(*prompt);//enabled this frame
-		HUD::_UIPROMPT_SET_VISIBLE(*prompt, enabled);//visible
+		UI::_0x71215ACCFDE075EE(*prompt, enabled);//visible   _UIPROMPT_SET_VISIBLE
 		//deletePrompt(prompt);
 	}
 }
 
 void deletePrompt(int* prompt) {
 	setPromptEnabled(prompt,false);
-	HUD::_UIPROMPT_DELETE(*prompt);//kinda useless for us since we are keeping it always created for simplicity
+	UI::_0x00EDE88D4D13CF59(*prompt);//kinda useless for us since we are keeping it always created for simplicity      _UIPROMPT_DELETE
 	*prompt = -1;
 }
 
 //F4A5C4509BF923B1 is set prompt type
 bool isPromptJustPressed(int prompt) {
-	return HUD::_UIPROMPT_IS_JUST_PRESSED(prompt);
+	return UI::_0x2787CC611D3FACC5(prompt); //  uipromt is just pressed
 }
 bool isPromptJustReleased(int prompt) {
-	return HUD::_UIPROMPT_IS_JUST_RELEASED(prompt);
+	return UI::_0x635CC82FA297A827(prompt);  // _UIPROMPT_IS_JUST_RELEASED
 }
 
 void createPrompt(int* prompt, int button, char* text, int secondButton = 0) {
 	if (!isPromptValid(*prompt)) {
-		*prompt = HUD::_UIPROMPT_REGISTER_BEGIN();//_PROMPT_REGISTER_BEGIN()
+		*prompt = UI::_0x04F97DE45A519419();//_PROMPT_REGISTER_BEGIN()
 		//UI::_0xF4A5C4509BF923B1(*prompt, 0);//unknown
 		//UI::_0xB5352B7494A08258(globalPrompt, func_496(0));//_PROMPT_SET_CONTROL_ACTION   Q button
 		//UI::_0xB5352B7494A08258(globalPrompt, func_496(1));//_PROMPT_SET_CONTROL_ACTION   E button
@@ -2477,9 +2477,9 @@ void createPrompt(int* prompt, int button, char* text, int secondButton = 0) {
 		//UI::_0xB5352B7494A08258(*prompt, func_496(5));//backspace
 		//UI::_0xB5352B7494A08258(*prompt, func_496(8));//X
 
-		HUD::_UIPROMPT_SET_CONTROL_ACTION(*prompt, button);
+		UI::_0xB5352B7494A08258(*prompt, button);
 		if (secondButton != 0)
-			HUD::_UIPROMPT_SET_CONTROL_ACTION(*prompt, secondButton);
+			UI::_0xB5352B7494A08258(*prompt, secondButton);
 
 		//_UIPROMPT_SET_ALLOWED_ACTION
 		/*UI::_0x565C1CE183CB0EAF(*prompt, button);
@@ -2501,13 +2501,13 @@ void createPrompt(int* prompt, int button, char* text, int secondButton = 0) {
 		UI::_0xF4A5C4509BF923B1(*prompt, 0);*/
 
 		//UI::_0xCA24F528D0D16289(uParam0->f_1190, iParam6);//_PROMPT_SET_PRIORITY
-		HUD::_UIPROMPT_SET_VISIBLE(*prompt, false);//_PROMPT_SET_VISIBLE
-		HUD::_UIPROMPT_SET_ENABLED(*prompt, false);//_PROMPT_SET_ENABLED
-		HUD::_UIPROMPT_REGISTER_END(*prompt);
+		UI::_0x71215ACCFDE075EE(*prompt, false);//_PROMPT_SET_VISIBLE
+		UI::_0x8A0FB4D03A630D21(*prompt, false);//_PROMPT_SET_ENABLED
+		UI::_0xF7AA2696A22AD8B9(*prompt);
 	}
 	//update text if necessary
 	//UI::_0xEA5CCF4EEB2F82D1(*prompt);
-	HUD::_UIPROMPT_SET_TEXT(*prompt, MISC::VAR_STRING(10, "LITERAL_STRING", text)/*"IB_SELECT"*/);//_PROMPT_SET_TEXT
+	UI::_0x5DD02A8318420DD7(*prompt, (Any*)GAMEPLAY::CREATE_STRING(10, "LITERAL_STRING", text)/*"IB_SELECT"*/);//_PROMPT_SET_TEXT
 }
 
 static int promptF = -1;
@@ -2539,17 +2539,17 @@ void promptUFO(bool insideUFO, bool canLandUFO, bool canEnterUFO) {
 
 	if (controllerMode) {
 		if (insideUFO) {
-			PAD::SET_INPUT_EXCLUSIVE(INPUT_GROUP_CONTROLLER, Buttons::Button_L3);
-			PAD::SET_INPUT_EXCLUSIVE(INPUT_GROUP_CONTROLLER, Buttons::Button_R2);
-			PAD::SET_INPUT_EXCLUSIVE(INPUT_GROUP_CONTROLLER, Buttons::Button_X);
-			PAD::SET_INPUT_EXCLUSIVE(INPUT_GROUP_CONTROLLER, Buttons::Button_R1);
-			PAD::SET_INPUT_EXCLUSIVE(INPUT_GROUP_CONTROLLER, Buttons::Button_Square);
+			CONTROLS::SET_INPUT_EXCLUSIVE(INPUT_GROUP_CONTROLLER, Buttons::Button_L3);
+			CONTROLS::SET_INPUT_EXCLUSIVE(INPUT_GROUP_CONTROLLER, Buttons::Button_R2);
+			CONTROLS::SET_INPUT_EXCLUSIVE(INPUT_GROUP_CONTROLLER, Buttons::Button_X);
+			CONTROLS::SET_INPUT_EXCLUSIVE(INPUT_GROUP_CONTROLLER, Buttons::Button_R1);
+			CONTROLS::SET_INPUT_EXCLUSIVE(INPUT_GROUP_CONTROLLER, Buttons::Button_Square);
 
 		}
 		if (canEnterUFO || canLandUFO)
-			PAD::SET_INPUT_EXCLUSIVE(INPUT_GROUP_CONTROLLER, Buttons::Button_Triangle);
+			CONTROLS::SET_INPUT_EXCLUSIVE(INPUT_GROUP_CONTROLLER, Buttons::Button_Triangle);
 		if (runRightClick)
-			PAD::SET_INPUT_EXCLUSIVE(INPUT_GROUP_CONTROLLER, Buttons::Button_L2);
+			CONTROLS::SET_INPUT_EXCLUSIVE(INPUT_GROUP_CONTROLLER, Buttons::Button_L2);
 	}
 
 	
@@ -2596,7 +2596,7 @@ void promptUFO(bool insideUFO, bool canLandUFO, bool canEnterUFO) {
 		setPromptEnabled(&promptE, true);
 
 		if (!(ufomod::getHeightAboveGround() < ufomod::maxHeightToLane)) {
-			HUD::_UIPROMPT_SET_ENABLED(promptE, false);//disable the prompt because you are not flying low enough
+			UI::_0x8A0FB4D03A630D21(promptE, false);//disable the prompt because you are not flying low enough
 		}
 
 	}
@@ -2610,7 +2610,7 @@ void promptUFO(bool insideUFO, bool canLandUFO, bool canEnterUFO) {
 	if (insideUFO) {
 		float heightAboveGround = ufomod::getHeightAboveGround();
 		if (heightAboveGround < ufomod::slowModeHeight) {
-			HUD::_UIPROMPT_SET_ENABLED(promptShift, false);//disable the prompt because you are not flying high enough
+			UI::_0x8A0FB4D03A630D21(promptShift, false);//disable the prompt because you are not flying high enough
 		}
 	}
 
@@ -2632,7 +2632,7 @@ void setCampFunds(int amt) {
 	//unk_0xA4DDF5DF95E65EEE(&Var0, iParam0, 1);
 	//unksize2 Var0 = { func_1299(1736503291) };
 	unksize2 Var0 = { 1736503291 };
-	STATS::STAT_ID_SET_INT((Any*)&Var0, amt, 1);
+	STATS::_0xA4DDF5DF95E65EEE((Any*)&Var0, amt, 1); // STAT_ID_SET_INT
 }
 
 
@@ -2660,8 +2660,9 @@ namespace particles {
 	//scr_winter4 scr_wnt4_private_car_breach
 	//"scr_distance_smoke","scr_campfire_distance_smoke_sma"
 	int createParticleAtCoord(float x, float y, float z, char* dictionary, char* name) {
-		STREAMING::REQUEST_NAMED_PTFX_ASSET(-458373790);
-		STREAMING::REQUEST_NAMED_PTFX_ASSET(MISC::GET_HASH_KEY(dictionary));
+		//STREAMING::REQUEST_NAMED_PTFX_ASSET(-458373790);
+		//STREAMING::REQUEST_NAMED_PTFX_ASSET(GAMEPLAY::GET_HASH_KEY(dictionary));
+		STREAMING::REQUEST_NAMED_PTFX_ASSET(dictionary);
 		GRAPHICS::USE_PARTICLE_FX_ASSET(dictionary);
 		return GRAPHICS::START_PARTICLE_FX_LOOPED_AT_COORD(name, x, y, z, 0, 0, 0, 1, false, false, false, false);
 	}
@@ -2676,7 +2677,7 @@ namespace checkpoint {
 
 	int createCheckpointAtCoord(float x, float y, float z, int checkpointID = -993457185) {
 		//func_1433(testValueThingy)
-		return GRAPHICS::CREATE_CHECKPOINT_WITH_NAMEHASH(checkpointID, x, y, z, x, y, z - 1.0f, 1.0f, 0, 0, 255, 255, 0);//	_CREATE_CHECKPOINT
+		return GRAPHICS::_0x175668836B44CBB0(checkpointID, x, y, z, x, y, z - 1.0f, 1.0f, 0, 0, 255, 255, 0);//	_CREATE_CHECKPOINT
 	}
 	void deleteCheckpoint(int checkpointID) {
 		GRAPHICS::DELETE_CHECKPOINT(checkpointID);
